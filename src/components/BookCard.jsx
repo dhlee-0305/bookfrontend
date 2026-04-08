@@ -58,8 +58,11 @@ export default function BookCard({ book, onToast }) {
             >
               {book.title}
             </button>
-            <BookStatusBadge status={book.status} />
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <BookStatusBadge status={book.status} />
+            </div>
           </div>
+
           <p className="text-xs text-gray-500 mt-0.5 truncate">
             {book.author} · {book.publisher}
           </p>

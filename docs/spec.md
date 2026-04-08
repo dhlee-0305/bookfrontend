@@ -75,20 +75,20 @@ bookfrontend/
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 |
 |--------|------|------|------|------|
-| GET | `/api/books` | 도서 목록 조회 | query: `status`, `genre`, `search`, `sortBy`, `order` | `{ data: Book[], total: number }` |
+| GET | `/api/books` | 도서 목록 조회 | query: `status`, `genre`, `search`, `sortBy`, `order`, `include` | `{ data: Book[], total: number }` |
 | GET | `/api/books/:id` | 도서 상세 조회 | - | `{ data: Book }` |
 | POST | `/api/books` | 도서 등록 | `{ title, author, publisher?, isbn?, genre?, coverImageUrl?, purchaseDate?, status }` | `{ data: Book }` |
 | PUT | `/api/books/:id` | 도서 수정 | 등록과 동일 (부분 허용) | `{ data: Book }` |
 | DELETE | `/api/books/:id` | 도서 삭제 | - | - |
 
-### 독서 기록 (Readings)
+### 독서 기록 (reading-logs)
 
 | 메서드 | 경로 | 설명 | 요청 | 응답 |
 |--------|------|------|------|------|
-| GET | `/api/books/:bookId/readings` | 독서 기록 목록 | - | `{ data: Reading[] }` |
-| POST | `/api/books/:bookId/readings` | 독서 기록 추가 | `{ userName, startDate, endDate?, rating?, review? }` | `{ data: Reading }` |
-| PUT | `/api/books/:bookId/readings/:id` | 독서 기록 수정 | 추가와 동일 (부분 허용) | `{ data: Reading }` |
-| DELETE | `/api/books/:bookId/readings/:id` | 독서 기록 삭제 | - | - |
+| GET | `/api/books/:bookId/reading-logs` | 독서 기록 목록 | - | `{ data: Reading[] }` |
+| POST | `/api/books/:bookId/reading-logs` | 독서 기록 추가 | `{ userName, startDate, endDate?, rating?, review? }` | `{ data: Reading }` |
+| PUT | `/api/books/:bookId/reading-logs/:id` | 독서 기록 수정 | 추가와 동일 (부분 허용) | `{ data: Reading }` |
+| DELETE | `/api/books/:bookId/reading-logs/:id` | 독서 기록 삭제 | - | - |
 
 ### 메모 (Memos)
 
@@ -122,9 +122,12 @@ bookfrontend/
   "coverImageUrl": "string | null",
   "purchaseDate": "date-string | null",
   "status": "OWNED | SOLD | DONATED",
-  "createdAt": "ISO-8601"
+  "createdAt": "ISO-8601",
+  "readStatus": "string | null"
 }
 ```
+
+> `readStatus`는 `reading_logs` 테이블 조인 값으로, 도서 목록 조회 시 `include=readStatus` 쿼리 파라미터를 전달할 때 포함된다.
 
 ### Reading
 

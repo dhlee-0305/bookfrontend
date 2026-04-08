@@ -1,7 +1,7 @@
 import client from './client'
 
 export const fetchBooks = (params) =>
-  client.get('/books', { params })
+  client.get('/books', { params: { ...params, include: 'readStatus' } })
 
 export const fetchBook = (id) =>
   client.get(`/books/${id}`)
