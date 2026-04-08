@@ -1,8 +1,5 @@
 export const BOOK_STATUS = {
   OWNED: { label: '소장 중', color: 'bg-blue-100 text-blue-700' },
-  READING: { label: '읽는 중', color: 'bg-green-100 text-green-700' },
-  DONE: { label: '완독', color: 'bg-purple-100 text-purple-700' },
-  EXCLUDED: { label: '읽기 제외', color: 'bg-gray-100 text-gray-600' },
   SOLD: { label: '판매', color: 'bg-orange-100 text-orange-700' },
   DONATED: { label: '기부', color: 'bg-pink-100 text-pink-700' },
 }

@@ -31,6 +31,7 @@ function StarRating({ value, onChange, readOnly = false }) {
 function ReadingForm({ bookId, initial, onDone }) {
   const isEdit = !!initial
   const [form, setForm] = useState({
+    userName: initial?.userName ?? '',
     startDate: initial?.startDate ?? '',
     endDate: initial?.endDate ?? '',
     rating: initial?.rating ?? 0,
@@ -57,6 +58,17 @@ function ReadingForm({ bookId, initial, onDone }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-3">
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">사용자명 *</label>
+        <input
+          type="text"
+          required
+          value={form.userName}
+          onChange={(e) => set('userName', e.target.value)}
+          placeholder="이름을 입력하세요"
+          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+        />
+      </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">시작일 *</label>
@@ -142,6 +154,9 @@ function ReadingItem({ bookId, reading, onToast }) {
       <div className="flex items-start justify-between gap-2">
         <div className="space-y-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
+            {reading.userName && (
+              <span className="text-sm font-semibold text-indigo-700">{reading.userName}</span>
+            )}
             <span className="text-sm font-medium text-gray-800">
               {reading.startDate}
               {reading.endDate && <span className="text-gray-400"> → {reading.endDate}</span>}

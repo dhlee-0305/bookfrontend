@@ -42,45 +42,16 @@ bookfrontend/
 ├── public/
 ├── src/
 │   ├── api/                       # Axios API 호출 모듈
-│   │   ├── client.js              # Axios 인스턴스 및 인터셉터 설정
-│   │   ├── books.js               # 도서 CRUD API
-│   │   ├── readings.js            # 독서 기록 API
-│   │   ├── memos.js               # 메모 API
-│   │   └── stats.js               # 통계 API
 │   ├── assets/                    # 정적 파일 (이미지, SVG)
-│   │   ├── hero.png
-│   │   ├── react.svg
-│   │   └── vite.svg
 │   ├── components/                # 공통 재사용 컴포넌트
-│   │   ├── Layout.jsx             # 헤더 + 네비게이션 레이아웃
-│   │   ├── BookCard.jsx           # 도서 카드 (목록용)
-│   │   ├── BookStatusBadge.jsx    # 도서 상태 배지
-│   │   ├── ConfirmModal.jsx       # 삭제 확인 모달
-│   │   ├── Toast.jsx              # 토스트 알림
-│   │   ├── ReadingTab.jsx         # 독서 기록 탭 컴포넌트
-│   │   └── MemoTab.jsx            # 메모 탭 컴포넌트
 │   ├── constants/                 # 상수 정의
-│   │   └── book.js                # 도서 상태, 장르, 정렬 옵션
 │   ├── hooks/                     # React Query 커스텀 훅
-│   │   ├── useBooks.js            # 도서 CRUD 훅
-│   │   ├── useReadings.js         # 독서 기록 CRUD 훅
-│   │   ├── useMemos.js            # 메모 CRUD 훅
-│   │   └── useStats.js            # 통계 조회 훅
 │   ├── pages/                     # 페이지 컴포넌트
-│   │   ├── BookList.jsx           # 도서 목록 페이지
-│   │   ├── BookForm.jsx           # 도서 등록/수정 페이지
-│   │   ├── BookDetail.jsx         # 도서 상세 페이지
-│   │   └── Stats.jsx              # 통계 대시보드 페이지
 │   ├── App.jsx                    # 라우팅 설정
 │   ├── App.css                    # 앱 스타일
 │   ├── index.css                  # 글로벌 스타일 (Tailwind)
 │   └── main.jsx                   # 진입점 (React Query Provider)
-├── docs/
-│   └── spec.md                    # 서비스 명세
-├── index.html
-├── vite.config.js                 # Vite 설정 (프록시 포함)
-├── package.json
-└── eslint.config.js
+└── docs/
 ```
 
 ---
@@ -115,7 +86,7 @@ bookfrontend/
 | 메서드 | 경로 | 설명 | 요청 | 응답 |
 |--------|------|------|------|------|
 | GET | `/api/books/:bookId/readings` | 독서 기록 목록 | - | `{ data: Reading[] }` |
-| POST | `/api/books/:bookId/readings` | 독서 기록 추가 | `{ startDate, endDate?, rating?, review? }` | `{ data: Reading }` |
+| POST | `/api/books/:bookId/readings` | 독서 기록 추가 | `{ userName, startDate, endDate?, rating?, review? }` | `{ data: Reading }` |
 | PUT | `/api/books/:bookId/readings/:id` | 독서 기록 수정 | 추가와 동일 (부분 허용) | `{ data: Reading }` |
 | DELETE | `/api/books/:bookId/readings/:id` | 독서 기록 삭제 | - | - |
 
@@ -150,7 +121,7 @@ bookfrontend/
   "genre": "string | null",
   "coverImageUrl": "string | null",
   "purchaseDate": "date-string | null",
-  "status": "OWNED | READING | DONE | EXCLUDED | SOLD | DONATED",
+  "status": "OWNED | SOLD | DONATED",
   "createdAt": "ISO-8601"
 }
 ```
@@ -161,6 +132,7 @@ bookfrontend/
 {
   "id": "number",
   "bookId": "number",
+  "userName": "string",
   "startDate": "date-string",
   "endDate": "date-string | null",
   "rating": "number (1~5) | null",
@@ -198,8 +170,5 @@ bookfrontend/
 | 코드 | 레이블 |
 |------|--------|
 | `OWNED` | 소장 중 |
-| `READING` | 읽는 중 |
-| `DONE` | 완독 |
-| `EXCLUDED` | 읽기 제외 |
 | `SOLD` | 판매 |
 | `DONATED` | 기부 |

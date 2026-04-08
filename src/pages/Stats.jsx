@@ -4,9 +4,6 @@ import { BOOK_STATUS } from '../constants/book'
 /* ── 공통 색상 팔레트 ── */
 const STATUS_COLORS = {
   OWNED: 'bg-blue-400',
-  READING: 'bg-green-400',
-  DONE: 'bg-purple-400',
-  EXCLUDED: 'bg-gray-300',
   SOLD: 'bg-orange-400',
   DONATED: 'bg-pink-400',
 }
@@ -156,8 +153,6 @@ export default function Stats() {
 
   const totalGenre = genreItems.reduce((s, { value }) => s + value, 0)
 
-  const doneCount = byStatus['DONE'] ?? 0
-  const readingCount = byStatus['READING'] ?? 0
 
   if (isLoading) {
     return (
@@ -185,10 +180,6 @@ export default function Stats() {
       {/* 요약 카드 */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatCard label="전체 도서" value={`${totalBooks}권`} color="text-indigo-600" />
-        <StatCard label="완독" value={`${doneCount}권`} color="text-purple-600"
-          sub={totalBooks > 0 ? `완독률 ${Math.round((doneCount / totalBooks) * 100)}%` : undefined}
-        />
-        <StatCard label="읽는 중" value={`${readingCount}권`} color="text-green-600" />
         <StatCard
           label="평균 별점"
           value={avgRating != null ? `${Number(avgRating).toFixed(1)}★` : '-'}
