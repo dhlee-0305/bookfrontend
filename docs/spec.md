@@ -11,6 +11,13 @@
 
 ## 주요 기능
 
+### 인증 (Login / Signup)
+- 이메일, 비밀번호 기반 회원가입
+- 로그인 성공 시 사용자 정보를 전역 인증 상태에 저장
+- 세션 기반 인증 유지 (`withCredentials: true`)
+- 로그아웃 시 세션 종료 후 로그인 화면 또는 보호된 화면 접근 차단
+- 비로그인 사용자가 보호된 화면 접근 시 로그인 후 원래 페이지로 이동 가능
+
 ### 도서 목록 (BookList)
 - 상태 탭 필터: 전체 / 소장 중 / 읽는 중 / 완독 / 읽기 제외 / 판매 / 기부
 - 키워드 검색: 제목, 저자, ISBN
@@ -35,31 +42,12 @@
 
 ---
 
-## 프로젝트 구조
-
-```
-bookfrontend/
-├── public/
-├── src/
-│   ├── api/                       # Axios API 호출 모듈
-│   ├── assets/                    # 정적 파일 (이미지, SVG)
-│   ├── components/                # 공통 재사용 컴포넌트
-│   ├── constants/                 # 상수 정의
-│   ├── hooks/                     # React Query 커스텀 훅
-│   ├── pages/                     # 페이지 컴포넌트
-│   ├── App.jsx                    # 라우팅 설정
-│   ├── App.css                    # 앱 스타일
-│   ├── index.css                  # 글로벌 스타일 (Tailwind)
-│   └── main.jsx                   # 진입점 (React Query Provider)
-└── docs/
-```
-
----
-
 ## 라우팅
 
 | 경로 | 페이지 | 설명 |
 |------|--------|------|
+| `/login` | Login | 로그인 |
+| `/signup` | Signup | 회원가입 |
 | `/` | redirect | `/books`로 리다이렉트 |
 | `/books` | BookList | 도서 목록 (검색, 필터, 정렬) |
 | `/books/new` | BookForm | 도서 등록 |
@@ -67,9 +55,21 @@ bookfrontend/
 | `/books/:id/edit` | BookForm | 도서 수정 |
 | `/stats` | Stats | 통계 대시보드 |
 
+- `/books`, `/books/new`, `/books/:id`, `/books/:id/edit`, `/stats`는 인증 필요 화면으로 간주한다.
+- 로그인 상태 확인은 앱 초기 진입 시 `/api/auth/me` 호출로 처리한다.
+
 ---
 
 ## API 엔드포인트
+
+### 인증 (Auth)
+
+| 메서드 | 경로 | 설명 | 요청 | 응답 |
+|--------|------|------|------|------|
+| POST | `/api/auth/signup` | 회원가입 | `{ email, password }` | `{ success, data: User }` |
+| POST | `/api/auth/login` | 로그인 | `{ email, password }` | `{ success, data: User }` |
+| POST | `/api/auth/logout` | 로그아웃 | - | `{ success, message }` |
+| GET | `/api/auth/me` | 현재 로그인 사용자 조회 | - | `{ success, data: User }` |
 
 ### 도서 (Books)
 
@@ -133,6 +133,16 @@ bookfrontend/
 ---
 
 ## 데이터 모델
+
+### User
+
+```json
+{
+  "id": "number | string",
+  "email": "string",
+  "createdAt": "ISO-8601"
+}
+```
 
 ### Book
 
