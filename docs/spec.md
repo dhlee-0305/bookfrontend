@@ -73,13 +73,38 @@ bookfrontend/
 
 ### 도서 (Books)
 
-| 메서드 | 경로 | 설명 | 요청 | 응답 |
+| 메서드 | 경로 | 설명 | 요청 |
 |--------|------|------|------|------|
-| GET | `/api/books` | 도서 목록 조회 | query: `status`, `genre`, `search`, `sortBy`, `order`, `include` | `{ data: Book[], total: number }` |
-| GET | `/api/books/:id` | 도서 상세 조회 | - | `{ data: Book }` |
-| POST | `/api/books` | 도서 등록 | `{ title, author, publisher?, isbn?, genre?, coverImageUrl?, purchaseDate?, status }` | `{ data: Book }` |
-| PUT | `/api/books/:id` | 도서 수정 | 등록과 동일 (부분 허용) | `{ data: Book }` |
-| DELETE | `/api/books/:id` | 도서 삭제 | - | - |
+| GET | `/api/books` | 도서 목록 조회 | query: `status`, `genre`, `search`, `sortBy`, `order`, `include` |
+| GET | `/api/books/:id` | 도서 상세 조회 | - |
+| POST | `/api/books` | 도서 등록 | `{ title, author, publisher?, isbn?, genre?, coverImageUrl?, purchaseDate?, status }` |
+| PUT | `/api/books/:id` | 도서 수정 | 등록과 동일 (부분 허용) |
+| DELETE | `/api/books/:id` | 도서 삭제 | - |
+
+응답항목:
+
+- `GET /api/books`
+  `success`, `data`, `total`
+  `data[]`: `id`, `title`, `author`, `publisher`, `isbn`, `genre`, `coverUrl`, `purchaseDate`, `status`, `createdAt`, `updatedAt`, `readingLogs`, `_count`
+  `data[].readingLogs[]`: `readStatus`, `rating`, `startDate`, `endDate`, `userName`
+  `data[]._count`: `memos`
+
+- `GET /api/books/:id`
+  `success`, `data`
+  `data`: `id`, `title`, `author`, `publisher`, `isbn`, `genre`, `coverUrl`, `purchaseDate`, `status`, `createdAt`, `updatedAt`, `readingLogs`, `memos`
+  `data.readingLogs[]`: `id`, `bookId`, `userName`, `readStatus`, `startDate`, `endDate`, `rating`, `review`, `createdAt`, `updatedAt`
+  `data.memos[]`: `id`, `bookId`, `page`, `content`, `type`, `createdAt`, `updatedAt`
+
+- `POST /api/books`
+  `success`, `data`
+  `data`: `id`, `title`, `author`, `publisher`, `isbn`, `genre`, `coverUrl`, `purchaseDate`, `status`, `createdAt`, `updatedAt`
+
+- `PUT /api/books/:id`
+  `success`, `data`
+  `data`: `id`, `title`, `author`, `publisher`, `isbn`, `genre`, `coverUrl`, `purchaseDate`, `status`, `createdAt`, `updatedAt`
+
+- `DELETE /api/books/:id`
+  `success`, `message`
 
 ### 독서 기록 (reading-logs)
 
@@ -126,8 +151,6 @@ bookfrontend/
   "readStatus": "string | null"
 }
 ```
-
-> `readStatus`는 `reading_logs` 테이블 조인 값으로, 도서 목록 조회 시 `include=readStatus` 쿼리 파라미터를 전달할 때 포함된다.
 
 ### Reading
 

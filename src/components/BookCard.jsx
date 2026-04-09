@@ -5,6 +5,13 @@ import ConfirmModal from './ConfirmModal'
 import { useDeleteBook, useUpdateBook } from '../hooks/useBooks'
 import { BOOK_STATUS_OPTIONS } from '../constants/book'
 
+const formatDate = (value) => {
+  if (!value) return null
+  const d = new Date(value)
+  if (isNaN(d.getTime())) return value
+  return d.toISOString().slice(0, 10)
+}
+
 export default function BookCard({ book, onToast }) {
   const navigate = useNavigate()
   const [showDelete, setShowDelete] = useState(false)
@@ -72,7 +79,7 @@ export default function BookCard({ book, onToast }) {
             </span>
           )}
           {book.purchaseDate && (
-            <p className="text-xs text-gray-400 mt-1">구입일: {book.purchaseDate}</p>
+            <p className="text-xs text-gray-400 mt-1">구입일: {formatDate(book.purchaseDate)}</p>
           )}
 
           {/* 상태 변경 + 액션 버튼 */}

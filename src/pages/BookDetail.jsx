@@ -103,7 +103,7 @@ export default function BookDetail() {
             <p className="text-xs text-gray-400">ISBN: {book.isbn}</p>
           )}
           {book.purchaseDate && (
-            <p className="text-xs text-gray-400">구입일: {book.purchaseDate}</p>
+            <p className="text-xs text-gray-400">구입일: {new Date(book.purchaseDate).toISOString().slice(0, 10)}</p>
           )}
         </div>
       </div>
