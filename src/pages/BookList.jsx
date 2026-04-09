@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { useBooks } from '../hooks/useBooks'
 import BookCard from '../components/BookCard'
 import Toast from '../components/Toast'
-import { BOOK_STATUS, GENRE_OPTIONS, SORT_OPTIONS } from '../constants/book'
+import { BOOK_STATUS, GENRE_OPTIONS, SORT_OPTIONS, READ_STATUS_OPTIONS } from '../constants/book'
+import { useAuth } from '../context/AuthContext'
 
 const STATUS_TABS = [
   { value: '', label: '전체' },
@@ -12,6 +13,7 @@ const STATUS_TABS = [
 
 export default function BookList() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [toast, setToast] = useState(null)
   const [filters, setFilters] = useState({
     status: '',
@@ -19,11 +21,15 @@ export default function BookList() {
     search: '',
     sortBy: 'createdAt',
     order: 'desc',
+    readStatus: '',
   })
 
-  const { data, isLoading, isError, error } = useBooks(
-    Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== '')),
-  )
+  const activeFilters = Object.fromEntries(Object.entries(filters).filter(([, v]) => v !== ''))
+  if (filters.readStatus && user?.email) {
+    activeFilters.userName = user.email
+  }
+
+  const { data, isLoading, isError, error } = useBooks(activeFilters)
 
   const books = data?.data ?? []
   const total = data?.total ?? 0
@@ -69,6 +75,25 @@ export default function BookList() {
           </button>
         ))}
       </div>
+
+      {/* 읽기 상태 필터 (로그인 시에만 표시) */}
+      {user && (
+        <div className="flex gap-1 mb-4 flex-wrap">
+          {READ_STATUS_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setFilter('readStatus', opt.value)}
+              className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
+                filters.readStatus === opt.value
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:border-emerald-400'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* 검색 / 필터 바 */}
       <div className="flex flex-wrap gap-2 mb-6">

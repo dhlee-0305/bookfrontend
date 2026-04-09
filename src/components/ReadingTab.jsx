@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useReadings, useCreateReading, useUpdateReading, useDeleteReading } from '../hooks/useReadings'
+import { useAuth } from '../context/AuthContext'
 
 const STAR_LABELS = ['', '별로', '보통', '괜찮음', '좋음', '최고']
 
@@ -30,6 +31,7 @@ function StarRating({ value, onChange, readOnly = false }) {
 
 function ReadingForm({ bookId, initial, onDone }) {
   const isEdit = !!initial
+  const { user } = useAuth()
   const [form, setForm] = useState({
     userName: initial?.userName ?? '',
     startDate: initial?.startDate ?? '',
@@ -65,7 +67,7 @@ function ReadingForm({ bookId, initial, onDone }) {
           required
           value={form.userName}
           onChange={(e) => set('userName', e.target.value)}
-          placeholder="이름을 입력하세요"
+          placeholder={user?.email ?? '이름을 입력하세요'}
           className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
         />
       </div>

@@ -22,6 +22,12 @@ export const GENRE_OPTIONS = [
   { value: '기타', label: '기타' },
 ]
 
+export const READ_STATUS_OPTIONS = [
+  { value: '', label: '전체' },
+  { value: 'READ', label: '읽음' },
+  { value: 'EXCLUDED', label: '읽기 제외' },
+]
+
 export const SORT_OPTIONS = [
   { value: 'createdAt', label: '등록일' },
   { value: 'title', label: '제목' },
