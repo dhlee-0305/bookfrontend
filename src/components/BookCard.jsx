@@ -12,7 +12,7 @@ const formatDate = (value) => {
   return d.toISOString().slice(0, 10)
 }
 
-export default function BookCard({ book, onToast }) {
+export default function BookCard({ book, onToast, page, limit }) {
   const navigate = useNavigate()
   const [showDelete, setShowDelete] = useState(false)
   const { mutate: deleteBook, isPending: deleting } = useDeleteBook()
@@ -60,7 +60,7 @@ export default function BookCard({ book, onToast }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <button
-              onClick={() => navigate(`/books/${book.id}`)}
+              onClick={() => navigate(`/books/${book.id}`, { state: { page, limit } })}
               className="text-left text-sm font-semibold text-gray-900 hover:text-indigo-600 truncate"
             >
               {book.title}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { useBook, useDeleteBook } from '../hooks/useBooks'
 import BookStatusBadge from '../components/BookStatusBadge'
 import ConfirmModal from '../components/ConfirmModal'
@@ -15,6 +15,8 @@ const TABS = [
 export default function BookDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const listState = location.state ?? {}
   const [showDelete, setShowDelete] = useState(false)
   const [toast, setToast] = useState(null)
   const [activeTab, setActiveTab] = useState('readings')
@@ -29,7 +31,7 @@ export default function BookDetail() {
       onSuccess: () => {
         setShowDelete(false)
         setToast({ message: '도서가 삭제되었습니다.', type: 'success' })
-        setTimeout(() => navigate('/books'), 1200)
+        setTimeout(() => navigate('/books', { state: listState }), 1200)
       },
       onError: (e) => setToast({ message: e.message, type: 'error' }),
     })
@@ -48,7 +50,7 @@ export default function BookDetail() {
       {/* 상단 네비 */}
       <div className="flex items-center gap-3 mb-6">
         <button
-          onClick={() => navigate('/books')}
+          onClick={() => navigate('/books', { state: listState })}
           className="text-gray-400 hover:text-gray-600 text-lg"
         >
           ←

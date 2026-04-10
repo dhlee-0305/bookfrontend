@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useBooks } from '../hooks/useBooks'
 import BookCard from '../components/BookCard'
 import Toast from '../components/Toast'
@@ -60,9 +60,10 @@ function Pagination({ page, totalPages, onPageChange }) {
 
 export default function BookList() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { user } = useAuth()
   const [toast, setToast] = useState(null)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(location.state?.page ?? 1)
   const [filters, setFilters] = useState({
     status: '',
     genre: '',
@@ -224,7 +225,7 @@ export default function BookList() {
       {!isLoading && !isError && books.length > 0 && (
         <div className="grid gap-3">
           {books.map((book) => (
-            <BookCard key={book.id} book={book} onToast={handleToast} />
+            <BookCard key={book.id} book={book} onToast={handleToast} page={page} limit={LIMIT} />
           ))}
         </div>
       )}
