@@ -11,15 +11,63 @@ const STATUS_TABS = [
   ...Object.entries(BOOK_STATUS).map(([value, { label }]) => ({ value, label })),
 ]
 
+const LIMIT = 10
+
+const PAGE_GROUP_SIZE = 10
+
+function Pagination({ page, totalPages, onPageChange }) {
+  if (totalPages <= 1) return null
+
+  const groupIndex = Math.ceil(page / PAGE_GROUP_SIZE)
+  const startPage = (groupIndex - 1) * PAGE_GROUP_SIZE + 1
+  const endPage = Math.min(groupIndex * PAGE_GROUP_SIZE, totalPages)
+  const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i)
+
+  return (
+    <div className="flex items-center justify-center gap-1 mt-6">
+      <button
+        onClick={() => onPageChange(page - 1)}
+        disabled={page <= 1}
+        className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        이전
+      </button>
+
+      {pages.map((p) => (
+        <button
+          key={p}
+          onClick={() => onPageChange(p)}
+          className={`px-3 py-1.5 text-sm rounded-lg font-medium transition-colors ${
+            p === page
+              ? 'bg-indigo-600 text-white'
+              : 'border border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+          }`}
+        >
+          {p}
+        </button>
+      ))}
+
+      <button
+        onClick={() => onPageChange(page + 1)}
+        disabled={page >= totalPages}
+        className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+      >
+        다음
+      </button>
+    </div>
+  )
+}
+
 export default function BookList() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [toast, setToast] = useState(null)
+  const [page, setPage] = useState(1)
   const [filters, setFilters] = useState({
     status: '',
     genre: '',
     search: '',
-    sortBy: 'createdAt',
+    sortBy: 'purchaseDate',
     order: 'desc',
     readStatus: '',
   })
@@ -29,17 +77,25 @@ export default function BookList() {
     activeFilters.userName = user.email
   }
 
-  const { data, isLoading, isError, error } = useBooks(activeFilters)
+  const { data, isLoading, isError, error } = useBooks({ ...activeFilters, page, limit: LIMIT })
 
   const books = data?.data ?? []
   const total = data?.total ?? 0
+  const totalPages = Math.ceil(total / LIMIT)
 
   const handleToast = useCallback((message, type = 'success') => {
     setToast({ message, type })
   }, [])
 
-  const setFilter = (key, value) =>
+  const setFilter = (key, value) => {
+    setPage(1)
     setFilters((prev) => ({ ...prev, [key]: value }))
+  }
+
+  const handlePageChange = (p) => {
+    setPage(p)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   return (
     <div>
@@ -130,9 +186,7 @@ export default function BookList() {
             ))}
           </select>
           <button
-            onClick={() =>
-              setFilter('order', filters.order === 'desc' ? 'asc' : 'desc')
-            }
+            onClick={() => setFilter('order', filters.order === 'desc' ? 'asc' : 'desc')}
             className="px-3 py-2 text-sm border border-gray-200 rounded-lg bg-white hover:bg-gray-50"
             title={filters.order === 'desc' ? '내림차순' : '오름차순'}
           >
@@ -144,7 +198,7 @@ export default function BookList() {
       {/* 목록 */}
       {isLoading && (
         <div className="grid gap-3">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(LIMIT)].map((_, i) => (
             <div key={i} className="bg-white rounded-xl border border-gray-200 p-4 h-28 animate-pulse" />
           ))}
         </div>
@@ -174,6 +228,8 @@ export default function BookList() {
           ))}
         </div>
       )}
+
+      <Pagination page={page} totalPages={totalPages} onPageChange={handlePageChange} />
 
       {toast && (
         <Toast
