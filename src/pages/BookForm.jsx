@@ -13,7 +13,7 @@ const schema = z.object({
   publisher: z.string().optional(),
   isbn: z.string().optional(),
   genre: z.string().optional(),
-  coverImageUrl: z.string().url('올바른 URL을 입력해주세요.').or(z.literal('')).optional(),
+  coverUrl: z.string().url('올바른 URL을 입력해주세요.').or(z.literal('')).optional(),
   purchaseDate: z.string().optional(),
   status: z.string().min(1),
 })
@@ -42,7 +42,7 @@ export default function BookForm() {
     defaultValues: { status: 'OWNED' },
   })
 
-  const coverValue = watch('coverImageUrl')
+  const coverValue = watch('coverUrl')
 
   useEffect(() => {
     if (isEdit && bookData?.data) {
@@ -53,11 +53,11 @@ export default function BookForm() {
         publisher: b.publisher ?? '',
         isbn: b.isbn ?? '',
         genre: b.genre ?? '',
-        coverImageUrl: b.coverImageUrl ?? '',
+        coverUrl: b.coverUrl ?? '',
         purchaseDate: b.purchaseDate ?? '',
         status: b.status ?? 'OWNED',
       })
-      setPreviewUrl(b.coverImageUrl ?? '')
+      setPreviewUrl(b.coverUrl ?? '')
     }
   }, [isEdit, bookData, reset])
 
@@ -194,11 +194,11 @@ export default function BookForm() {
           />
         </Field>
 
-        <Field label="표지 이미지 URL" error={errors.coverImageUrl?.message}>
+        <Field label="표지 이미지 URL" error={errors.coverUrl?.message}>
           <input
-            {...register('coverImageUrl')}
+            {...register('coverUrl')}
             placeholder="https://..."
-            className={input(errors.coverImageUrl)}
+            className={input(errors.coverUrl)}
           />
         </Field>
 

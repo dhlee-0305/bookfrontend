@@ -75,9 +75,9 @@ export default function BookDetail() {
       {/* 도서 정보 카드 */}
       <div className="bg-white rounded-xl border border-gray-200 p-6 flex gap-6">
         <div className="flex-shrink-0">
-          {book.coverImageUrl ? (
+          {book.coverUrl ? (
             <img
-              src={book.coverImageUrl}
+              src={book.coverUrl}
               alt={book.title}
               className="w-24 h-32 object-cover rounded shadow"
             />

@@ -43,9 +43,9 @@ export default function BookCard({ book, onToast, page, limit }) {
       <div className="bg-white rounded-xl border border-gray-200 p-4 flex gap-4 hover:shadow-md transition-shadow">
         {/* 표지 이미지 */}
         <div className="flex-shrink-0 w-16 h-22">
-          {book.coverImageUrl ? (
+          {book.coverUrl ? (
             <img
-              src={book.coverImageUrl}
+              src={book.coverUrl}
               alt={book.title}
               className="w-16 h-22 object-cover rounded"
             />
