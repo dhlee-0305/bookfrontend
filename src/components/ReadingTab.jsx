@@ -189,12 +189,11 @@ function ReadingItem({ bookId, reading, onToast }) {
           <div className="flex items-center gap-2 flex-wrap">
             {reading.userName && (
               <span className="text-sm font-semibold text-indigo-700">
-                {readStatusLabel ? `${readStatusLabel} ` : ''}:&nbsp; 
                 {reading.userName}
               </span>
             )}
-            {reading.endDate && (
-              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">완독</span>
+            {reading.createdAt && (
+              <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">{readStatusLabel ? `${readStatusLabel} ` : ''}</span>
             )}
           </div>
           {readDate && (
