@@ -1,12 +1,36 @@
 import { useState } from 'react'
 import { useReadings, useCreateReading, useUpdateReading, useDeleteReading } from '../hooks/useReadings'
 import { useAuth } from '../context/AuthContext'
+import { READ_STATUS_OPTIONS } from '../constants/book'
 
 const STAR_LABELS = ['', '별로', '보통', '괜찮음', '좋음', '최고']
+const READ_STATUS_LABELS = {
+  READ: '읽음',
+  EXCLUDED: '읽기 제외',
+}
+
+function formatDate(value) {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  return date.toLocaleDateString('ko-KR')
+}
+
+function formatDateInput(value) {
+  if (!value) return ''
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  return date.toISOString().slice(0, 10)
+}
 
 function StarRating({ value, onChange, readOnly = false }) {
   const [hovered, setHovered] = useState(0)
-  const display = readOnly ? value : (hovered || value)
+  const display = readOnly ? value : hovered || value
+
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map((n) => (
@@ -34,8 +58,8 @@ function ReadingForm({ bookId, initial, onDone }) {
   const { user } = useAuth()
   const [form, setForm] = useState({
     userName: initial?.userName ?? '',
-    startDate: initial?.startDate ?? '',
-    endDate: initial?.endDate ?? '',
+    readStatus: initial?.readStatus ?? 'READ',
+    endDate: formatDateInput(initial?.createdAt) || initial?.endDate || '',
     rating: initial?.rating ?? 0,
     review: initial?.review ?? '',
   })
@@ -51,11 +75,13 @@ function ReadingForm({ bookId, initial, onDone }) {
     const payload = Object.fromEntries(
       Object.entries(form).filter(([, v]) => v !== '' && v !== 0),
     )
+
     if (isEdit) {
       update({ id: initial.id, data: payload }, { onSuccess: onDone })
-    } else {
-      create(payload, { onSuccess: onDone })
+      return
     }
+
+    create(payload, { onSuccess: onDone })
   }
 
   return (
@@ -71,27 +97,30 @@ function ReadingForm({ bookId, initial, onDone }) {
           className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
         />
       </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">시작일 *</label>
-          <input
-            type="date"
-            required
-            value={form.startDate}
-            onChange={(e) => set('startDate', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-          />
-        </div>
-        <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">종료일</label>
-          <input
-            type="date"
-            value={form.endDate}
-            min={form.startDate}
-            onChange={(e) => set('endDate', e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-          />
-        </div>
+
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">읽기 상태</label>
+        <select
+          value={form.readStatus}
+          onChange={(e) => set('readStatus', e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+        >
+          {READ_STATUS_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">날짜</label>
+        <input
+          type="date"
+          value={form.endDate}
+          onChange={(e) => set('endDate', e.target.value)}
+          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
+        />
       </div>
 
       <div>
@@ -100,11 +129,11 @@ function ReadingForm({ bookId, initial, onDone }) {
       </div>
 
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">한줄 감상</label>
+        <label className="block text-xs font-medium text-gray-600 mb-1">독서 감상</label>
         <textarea
           value={form.review}
           onChange={(e) => set('review', e.target.value)}
-          placeholder="이 책에 대한 감상을 남겨보세요..."
+          placeholder="이 책에 대한 감상을 적어보세요."
           rows={3}
           className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white resize-none"
         />
@@ -133,6 +162,8 @@ function ReadingForm({ bookId, initial, onDone }) {
 function ReadingItem({ bookId, reading, onToast }) {
   const [editing, setEditing] = useState(false)
   const { mutate: del, isPending: deleting } = useDeleteReading(bookId)
+  const readStatusLabel = READ_STATUS_LABELS[reading.readStatus]
+  const readDate = formatDate(reading.createdAt)
 
   const handleDelete = () => {
     del(reading.id, {
@@ -157,19 +188,19 @@ function ReadingItem({ bookId, reading, onToast }) {
         <div className="space-y-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             {reading.userName && (
-              <span className="text-sm font-semibold text-indigo-700">{reading.userName}</span>
+              <span className="text-sm font-semibold text-indigo-700">
+                {readStatusLabel ? `${readStatusLabel} ` : ''}:&nbsp; 
+                {reading.userName}
+              </span>
             )}
-            <span className="text-sm font-medium text-gray-800">
-              {reading.startDate}
-              {reading.endDate && <span className="text-gray-400"> → {reading.endDate}</span>}
-            </span>
             {reading.endDate && (
               <span className="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">완독</span>
             )}
           </div>
-          {reading.rating > 0 && (
-            <StarRating value={reading.rating} readOnly />
+          {readDate && (
+            <p className="text-sm text-gray-500">날짜: {readDate}</p>
           )}
+          {reading.rating > 0 && <StarRating value={reading.rating} readOnly />}
           {reading.review && (
             <p className="text-sm text-gray-600 mt-1 whitespace-pre-wrap">{reading.review}</p>
           )}
@@ -213,12 +244,7 @@ export default function ReadingTab({ bookId, onToast }) {
         )}
       </div>
 
-      {showForm && (
-        <ReadingForm
-          bookId={bookId}
-          onDone={() => setShowForm(false)}
-        />
-      )}
+      {showForm && <ReadingForm bookId={bookId} onDone={() => setShowForm(false)} />}
 
       {isLoading && (
         <div className="space-y-2">
@@ -228,13 +254,11 @@ export default function ReadingTab({ bookId, onToast }) {
         </div>
       )}
 
-      {isError && (
-        <div className="text-center py-8 text-red-400 text-sm">{error?.message}</div>
-      )}
+      {isError && <div className="text-center py-8 text-red-400 text-sm">{error?.message}</div>}
 
       {!isLoading && !isError && readings.length === 0 && (
         <div className="text-center py-10 text-gray-400 text-sm">
-          <p className="text-3xl mb-2">📖</p>
+          <p className="text-3xl mb-2">📚</p>
           <p>아직 독서 기록이 없습니다.</p>
         </div>
       )}
