@@ -7,6 +7,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': 'http://localhost:4000',
+      '/kakao': {
+        target: 'https://dapi.kakao.com',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/kakao/, ''),
+      },
     },
   },
 })
