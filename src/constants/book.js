@@ -23,7 +23,8 @@ export const GENRE_OPTIONS = [
 ]
 
 export const READ_STATUS_OPTIONS = [
-  { value: 'READ', label: '읽음' },
+  { value: 'NONE', label: '읽을 책' },
+  { value: 'READ', label: '읽은 책' },
   { value: 'EXCLUDED', label: '읽기 제외' },
 ]
 
