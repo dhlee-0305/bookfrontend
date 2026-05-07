@@ -53,39 +53,31 @@ function BarChart({ items, total }) {
   )
 }
 
-/* ── 월별 독서량 차트 (세로 막대) ── */
-function MonthlyChart({ byMonth }) {
-  if (!byMonth || Object.keys(byMonth).length === 0) {
+/* ── 연도별 완독 수 차트 (세로 막대) ── */
+function YearlyChart({ yearlyReading }) {
+  if (!yearlyReading || yearlyReading.length === 0) {
     return <p className="text-sm text-gray-400 text-center py-6">데이터 없음</p>
   }
 
-  // 최근 12개월 키 생성
-  const now = new Date()
-  const keys = Array.from({ length: 12 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1)
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-  })
-
-  const max = Math.max(...keys.map((k) => byMonth[k] ?? 0), 1)
+  const sorted = [...yearlyReading].sort((a, b) => a.year - b.year)
+  const max = Math.max(...sorted.map((d) => d.count), 1)
 
   return (
-    <div className="flex items-end gap-1 h-32 px-1">
-      {keys.map((key) => {
-        const count = byMonth[key] ?? 0
+    <div className="flex items-end gap-3 h-40 px-2">
+      {sorted.map(({ year, count }) => {
         const heightPct = (count / max) * 100
-        const [, month] = key.split('-')
         return (
-          <div key={key} className="flex-1 flex flex-col items-center gap-1 group">
+          <div key={year} className="flex-1 flex flex-col items-center gap-1 group">
             <span className="text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
               {count}
             </span>
-            <div className="w-full flex flex-col justify-end" style={{ height: '88px' }}>
+            <div className="w-full flex flex-col justify-end" style={{ height: '104px' }}>
               <div
                 className="w-full bg-indigo-400 rounded-t transition-all duration-500 hover:bg-indigo-500"
                 style={{ height: `${heightPct}%`, minHeight: count > 0 ? '4px' : '0' }}
               />
             </div>
-            <span className="text-xs text-gray-400">{Number(month)}월</span>
+            <span className="text-xs text-gray-500">{year}년</span>
           </div>
         )
       })}
@@ -126,33 +118,32 @@ export default function Stats() {
   const stats = data?.data ?? data ?? {}
 
   const totalBooks = stats.totalBooks ?? 0
-  const byStatus = stats.byStatus ?? {}
-  const byGenre = stats.byGenre ?? {}
-  const byMonth = stats.byMonth ?? {}
+  const statusCounts = stats.statusCounts ?? []
+  const genreCounts = stats.genreCounts ?? []
+  const yearlyReading = stats.yearlyReading ?? []
   const avgRating = stats.avgRating ?? null
   const ratingDistribution = stats.ratingDistribution ?? {}
   const totalReadings = Object.values(ratingDistribution).reduce((a, b) => a + b, 0)
 
-  const statusItems = Object.entries(byStatus)
-    .filter(([, v]) => v > 0)
-    .map(([key, value]) => ({
-      label: BOOK_STATUS[key]?.label ?? key,
-      value,
-      colorClass: STATUS_COLORS[key] ?? 'bg-gray-300',
+  const statusItems = statusCounts
+    .filter(({ count }) => count > 0)
+    .map(({ status, count }) => ({
+      label: BOOK_STATUS[status]?.label ?? status,
+      value: count,
+      colorClass: STATUS_COLORS[status] ?? 'bg-gray-300',
     }))
     .sort((a, b) => b.value - a.value)
 
-  const genreItems = Object.entries(byGenre)
-    .filter(([, v]) => v > 0)
-    .sort((a, b) => b[1] - a[1])
-    .map(([label, value], i) => ({
-      label,
-      value,
+  const genreItems = [...genreCounts]
+    .filter(({ count }) => count > 0)
+    .sort((a, b) => b.count - a.count)
+    .map(({ genre, count }, i) => ({
+      label: genre,
+      value: count,
       colorClass: GENRE_COLORS[i % GENRE_COLORS.length],
     }))
 
   const totalGenre = genreItems.reduce((s, { value }) => s + value, 0)
-
 
   if (isLoading) {
     return (
@@ -188,10 +179,10 @@ export default function Stats() {
         />
       </div>
 
-      {/* 월별 독서량 */}
+      {/* 연도별 완독 수 */}
       <div className="bg-white rounded-xl border border-gray-200 p-5">
-        <h2 className="text-sm font-semibold text-gray-700 mb-4">월별 완독 수 (최근 12개월)</h2>
-        <MonthlyChart byMonth={byMonth} />
+        <h2 className="text-sm font-semibold text-gray-700 mb-4">연도별 완독 수</h2>
+        <YearlyChart yearlyReading={yearlyReading} />
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">

@@ -1,4 +1,4 @@
 import client from './client'
 
-export const fetchStats = () =>
-  client.get('/stats')
+export const fetchStats = (email) =>
+  client.get('/stats', { params: { email } })
