@@ -4,7 +4,14 @@
       "Bash(mkdir -p \"c:\\\\Downloads\\\\workspace_react\\\\bookfrontend\\\\.claude\\\\commands\")",
       "Bash(rm -rf \"c:\\\\Downloads\\\\workspace_react\\\\bookfrontend\\\\.claude\\\\commands\")",
       "Bash(mkdir \"c:\\\\Downloads\\\\workspace_react\\\\bookfrontend\\\\.claude\\\\skills\")",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(npm --version)",
+      "Read(//etc/**)",
+      "Read(//proc/**)",
+      "Bash(kill %1)",
+      "Bash(wait)",
+      "Bash(npm install *)",
+      "Bash(curl -s http://localhost:5173 -o /dev/null -w \"%{http_code}\")"
     ],
     "additionalDirectories": [
       "c:\\Downloads\\workspace_react\\bookfrontend\\.claude"
