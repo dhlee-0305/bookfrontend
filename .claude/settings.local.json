@@ -11,7 +11,8 @@
       "Bash(kill %1)",
       "Bash(wait)",
       "Bash(npm install *)",
-      "Bash(curl -s http://localhost:5173 -o /dev/null -w \"%{http_code}\")"
+      "Bash(curl -s http://localhost:5173 -o /dev/null -w \"%{http_code}\")",
+      "Bash(git diff *)"
     ],
     "additionalDirectories": [
       "c:\\Downloads\\workspace_react\\bookfrontend\\.claude"
