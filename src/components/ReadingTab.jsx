@@ -18,14 +18,6 @@ function formatDate(value) {
   return date.toLocaleDateString('ko-KR')
 }
 
-function formatDateInput(value) {
-  if (!value) return ''
-
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return ''
-
-  return date.toISOString().slice(0, 10)
-}
 
 function StarRating({ value, onChange, readOnly = false }) {
   const [hovered, setHovered] = useState(0)
@@ -59,7 +51,6 @@ function ReadingForm({ bookId, initial, onDone }) {
   const [form, setForm] = useState({
     userName: initial?.userName ?? '',
     readStatus: initial?.readStatus ?? 'READ',
-    endDate: formatDateInput(initial?.createdAt) || initial?.endDate || '',
     rating: initial?.rating ?? 0,
     review: initial?.review ?? '',
   })
@@ -111,16 +102,6 @@ function ReadingForm({ bookId, initial, onDone }) {
             </option>
           ))}
         </select>
-      </div>
-
-      <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">날짜</label>
-        <input
-          type="date"
-          value={form.endDate}
-          onChange={(e) => set('endDate', e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-        />
       </div>
 
       <div>
