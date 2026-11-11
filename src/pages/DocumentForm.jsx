@@ -23,10 +23,11 @@ function DocumentLoader({ id }) {
 function Editor({ id, document }) {
   const navigate = useNavigate()
   const location = useLocation()
-  const [form, setForm] = useState(() => ({ category: document?.category ?? 'AI', file: null }))
+  const [form, setForm] = useState(() => ({ category: document?.category ?? 'AI', file: null, images: null }))
   const [validating, setValidating] = useState(false)
   const submitting = useRef(false)
   const fileInput = useRef(null)
+  const imagesInput = useRef(null)
   const [error, setError] = useState('')
   const save = useSaveDocument(id)
   const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
@@ -38,8 +39,8 @@ function Editor({ id, document }) {
     const message = validateDocument(form, !!id)
     setError(message)
     if (message) return
-    if (id && !form.file && form.category === document.category) {
-      setError('카테고리를 변경하거나 교체할 파일을 선택해주세요.')
+    if (id && !form.file && !form.images && form.category === document.category) {
+      setError('카테고리를 변경하거나 Markdown 파일 또는 이미지 ZIP을 선택해주세요.')
       return
     }
     submitting.current = true
@@ -73,8 +74,22 @@ function Editor({ id, document }) {
           <input ref={fileInput} id="document-file" type="file" accept=".md" required={!id} aria-describedby="file-help" onChange={(event) => { set('file', event.target.files?.[0] ?? null); setError('') }} className={input} />
           <p id="file-help" className="mt-2 text-xs text-gray-500">UTF-8 .md 파일 한 개, 최대 10MB. 빈 파일도 업로드할 수 있습니다. 원본 파일명이 문서 제목이 됩니다.</p>
           <p className="mt-1 text-xs text-gray-500">파일명은 최대 240 UTF-8 바이트이며 같은 카테고리에서 중복할 수 없습니다.</p>
-          {id && <p className="mt-1 text-xs text-gray-500">파일을 선택하지 않으면 기존 파일을 유지하고 카테고리만 변경합니다. 제목 변경은 변경된 이름의 파일을 업로드해주세요.</p>}
+          {id && <p className="mt-1 text-xs text-gray-500">Markdown 파일을 선택하지 않으면 기존 문서 내용을 유지합니다. 제목 변경은 변경된 이름의 파일을 업로드해주세요.</p>}
           {form.file && <div className="mt-3 flex flex-wrap items-center gap-3 text-sm"><span className="break-all">선택 파일: {form.file.name} ({form.file.size.toLocaleString()} B)</span><button type="button" className="text-indigo-600" onClick={() => { set('file', null); fileInput.current.value = ''; setError('') }}>선택 취소</button></div>}
+        </div>
+        <div>
+          <label htmlFor="document-images" className="block text-sm font-medium mb-2">이미지 ZIP (선택)</label>
+          <input ref={imagesInput} id="document-images" type="file" accept=".zip" aria-describedby="images-help" onChange={(event) => { set('images', event.target.files?.[0] ?? null); setError('') }} className={input} />
+          <div id="images-help" className="mt-2 space-y-1 text-xs text-gray-500">
+            <p>이미지 ZIP 한 개, 최대 10MB. 이미지 파일과 하위 폴더를 ZIP 루트에 배치하세요.</p>
+            <p>지원 형식: PNG, JPG, JPEG, GIF, WEBP, AVIF, BMP, ICO, SVG. 압축 해제 후 최대 100MB, 파일·폴더 합계 1,000개까지 지원합니다.</p>
+            <p>ZIP 안의 도표/구성.png는 Markdown에서 ![구성](image/도표/구성.png)로 참조하세요. ZIP에 image 폴더를 별도로 넣지 마세요.</p>
+            {id && <p>ZIP을 첨부하지 않으면 기존 이미지를 유지합니다. 빈 ZIP을 첨부하면 이미지를 모두 삭제합니다.</p>}
+          </div>
+          {form.images && <div className="mt-3 space-y-2">
+            <div className="flex flex-wrap items-center gap-3 text-sm"><span className="break-all">선택 ZIP: {form.images.name} ({form.images.size.toLocaleString()} B)</span><button type="button" className="text-indigo-600" onClick={() => { set('images', null); imagesInput.current.value = ''; setError('') }}>선택 취소</button></div>
+            {id && <p className="text-sm text-amber-700">저장하면 기존 이미지가 모두 삭제되고 선택한 ZIP의 이미지로 전체 교체됩니다.</p>}
+          </div>}
         </div>
       </fieldset>
       {error && <p role="alert" className="text-sm text-red-600">{error}</p>}

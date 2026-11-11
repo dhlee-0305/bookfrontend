@@ -82,7 +82,7 @@ export default function DocumentList() {
           <button disabled={page >= totalPages} onClick={() => changePage(page + 1)} className="border rounded-lg px-3 py-2 disabled:opacity-40">다음</button>
         </nav>
       </>}
-      {deleteTarget && <ConfirmModal title="문서 삭제" message={`"${deleteTarget.title}" 문서를 삭제하시겠습니까?`} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} loading={deletion.isPending} />}
+      {deleteTarget && <ConfirmModal title="문서 삭제" message={`"${deleteTarget.title}" 문서와 첨부 이미지를 모두 삭제하시겠습니까?`} onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} loading={deletion.isPending} />}
       {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
     </div>
   )

@@ -3,10 +3,11 @@ import client from './client'
 export const fetchDocuments = (params) => client.get('/mkbrd', { params })
 export const fetchDocument = (id) => client.get(`/mkbrd/${id}`)
 
-export function documentFormData({ category, file }) {
+export function documentFormData({ category, file, images }) {
   const data = new FormData()
   if (category !== undefined) data.append('category', category)
   if (file) data.append('file', file)
+  if (images) data.append('images', images)
   return data
 }
 
