@@ -19,7 +19,12 @@ export default function DocumentDetail() {
     <article className="bg-white border border-gray-200 rounded-xl p-5 sm:p-8">
       <span className="text-xs text-indigo-700 bg-indigo-50 rounded px-2 py-1">{doc.category}</span>
       <h1 className="text-2xl font-bold mt-3 break-all">{doc.title}</h1>
-      <div className="text-xs text-gray-500 mt-3 mb-6 flex flex-wrap gap-3"><span>등록 {formatDocumentDate(doc.createdAt)}</span><span>수정 {formatDocumentDate(doc.updatedAt)}</span><span>{doc.size.toLocaleString()} B</span></div>
+      <div className="text-xs text-gray-500 mt-3 mb-6 flex flex-wrap gap-3">
+        <span className="break-all">작성자: {doc.authorEmail ?? '정보 없음'}</span>
+        <span>등록: {formatDocumentDate(doc.createdAt)}</span>
+        <span>수정: {formatDocumentDate(doc.updatedAt)}</span>
+        <span>크기: {doc.size.toLocaleString()} B</span>
+      </div>
       <DocumentContent content={doc.content} imageBaseUrl={doc.imageBaseUrl} />
     </article>
   </div>

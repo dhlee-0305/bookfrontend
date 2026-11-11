@@ -19,15 +19,15 @@ export default function Layout({ children }) {
             <Link to="/" className="text-lg font-bold text-indigo-600 tracking-tight">
               📚 내 서재
             </Link>
+          </div>
+          <nav className="flex items-center gap-4 text-sm font-medium text-gray-600">
             <Link
               to="/board"
               aria-current={pathname.startsWith('/board') ? 'page' : undefined}
               className={`text-sm font-medium hover:text-indigo-600 ${pathname.startsWith('/board') ? 'text-indigo-600' : 'text-gray-600'}`}
             >
-              게시판
+              문서 게시판
             </Link>
-          </div>
-          <nav className="flex items-center gap-4 text-sm font-medium text-gray-600">
             <Link
               to="/books"
               className={`hover:text-indigo-600 transition-colors ${
