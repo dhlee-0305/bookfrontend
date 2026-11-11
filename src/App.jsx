@@ -7,6 +7,9 @@ import BookDetail from './pages/BookDetail'
 import Stats from './pages/Stats'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import DocumentList from './pages/DocumentList'
+import DocumentDetail from './pages/DocumentDetail'
+import DocumentForm from './pages/DocumentForm'
 
 export default function App() {
   return (
@@ -25,6 +28,10 @@ export default function App() {
                   <Route path="/books/new" element={<BookForm />} />
                   <Route path="/books/:id" element={<BookDetail />} />
                   <Route path="/books/:id/edit" element={<BookForm />} />
+                  <Route path="/board" element={<DocumentList />} />
+                  <Route path="/board/new" element={<DocumentForm />} />
+                  <Route path="/board/:id" element={<DocumentDetail />} />
+                  <Route path="/board/:id/edit" element={<DocumentForm />} />
                   <Route path="/stats" element={<Stats />} />
                 </Routes>
               </Layout>

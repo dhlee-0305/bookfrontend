@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+.document-content { line-height: 1.8; color: #1f2937; overflow-wrap: anywhere; }
+.document-content > * + * { margin-top: 1rem; }
+.document-content h1, .document-content h2, .document-content h3,
+.document-content h4, .document-content h5, .document-content h6 { font-weight: 700; margin-top: 1.5rem; line-height: 1.4; }
+.document-content h1 { font-size: 1.875rem; }
+.document-content h2 { font-size: 1.5rem; border-bottom: 1px solid #e5e7eb; padding-bottom: .5rem; }
+.document-content h3 { font-size: 1.25rem; }
+.document-content ul { list-style: disc; padding-left: 1.5rem; }
+.document-content ol { list-style: decimal; padding-left: 1.5rem; }
+.document-content li > ul, .document-content li > ol { margin-top: .25rem; }
+.document-content blockquote { border-left: 4px solid #a5b4fc; padding-left: 1rem; color: #6b7280; }
+.document-content a { color: #4f46e5; text-decoration: underline; }
+.document-content pre { overflow-x: auto; padding: 1rem; border-radius: .5rem; background: #f3f4f6; }
+.document-content code { font-family: ui-monospace, monospace; font-size: .875em; background: #f3f4f6; padding: .15rem .3rem; border-radius: .25rem; }
+.document-content pre code { padding: 0; }
+.document-content table { display: block; overflow-x: auto; border-collapse: collapse; }
+.document-content th, .document-content td { border: 1px solid #d1d5db; padding: .5rem .75rem; }
+.document-content th { background: #f9fafb; font-weight: 600; }
+.document-content img { max-width: 100%; height: auto; }
+.document-content hr { border: 0; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
+.document-content .contains-task-list { list-style: none; }
+.document-content input[type="checkbox"] { margin-right: .5rem; }
