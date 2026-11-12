@@ -5,6 +5,7 @@
 개인 도서 관리 웹 서비스. 도서 등록/조회/수정/삭제, 독서 기록, 메모, 통계 기능을 제공한다.
 
 - **Tech Stack**: React 19, Vite, TanStack Query, React Router DOM, React Hook Form + Zod, Tailwind CSS, Axios
+- **Markdown 뷰어**: react-markdown + remark-gfm + mermaid (Mermaid 코드 블록을 SVG 다이어그램으로 표시)
 - **API Base URL**: `/api` (Vite 프록시 → `http://localhost:4000`)
 
 ---
@@ -263,3 +264,31 @@
 - 이미지 첨부: 등록·수정에서 선택적으로 ZIP 한 개를 `images` 필드로 전송한다. Markdown과 ZIP은 각각 최대 10MB이며, ZIP은 이미지 파일만 포함해야 한다. 압축 내부 검증과 압축 해제(최대 100MB, 항목 1,000개)는 서버가 수행한다.
 - 수정 시 ZIP 첨부는 기존 이미지 전체 교체이며 미첨부는 유지한다. 빈 ZIP을 첨부하면 이미지를 모두 비운다. Markdown 없이 ZIP만 교체할 수도 있다. 삭제 확인에는 첨부 이미지도 함께 삭제됨을 안내하고 DELETE 요청에는 첨부를 보내지 않는다.
 - 상세 뷰어는 Markdown의 `image/도표/구성.png` 또는 `./image/도표/구성.png`를 상세 API의 `imageBaseUrl` 아래 URL로 변환한다. 한글·공백 및 기존 퍼센트 인코딩을 처리하며 하위 폴더를 지원한다. 이미지와 하위 폴더는 ZIP 루트에 배치한다.
+
+#### Mermaid 다이어그램
+
+- Markdown 코드 블록 시작의 백틱 3개 뒤에 소문자 `mermaid`를 지정하면 다이어그램으로 표시한다. 시작 구분자와 끝 구분자는 각각 별도 줄에 작성한다.
+- 흐름도(`flowchart`), 시퀀스 다이어그램(`sequenceDiagram`) 등 설치된 Mermaid 라이브러리가 지원하는 문법을 사용한다. 언어가 `mermaid`가 아닌 코드 블록은 기존 코드 표시를 유지한다.
+- 라이브러리는 Mermaid 블록이 있을 때 동적으로 불러오며, 브라우저에서 SVG로 렌더링한다. 별도 서버 변환이나 이미지 첨부는 필요하지 않다.
+- 렌더링 중에는 `다이어그램을 불러오는 중입니다.`를 표시하고, 본문 내 Mermaid 소스가 변경되면 다시 렌더링한다.
+- 로딩 또는 렌더링 실패 시 해당 블록에 `다이어그램을 표시하지 못했습니다. Mermaid 문법을 확인해주세요.`를 표시한다. `오류 상세 및 원문 보기`를 펼치면 오류 메시지와 입력 소스를 확인할 수 있다.
+- 큰 다이어그램은 가로 스크롤로 확인한다.
+- Mermaid는 `securityLevel: 'strict'`로 초기화하며, 자동 DOM 렌더링과 Mermaid 기본 오류 다이어그램 표시를 비활성화한다. 일반 Markdown의 HTML 및 링크 처리 정책은 유지한다.
+
+작성 예시:
+
+````markdown
+```mermaid
+flowchart LR
+  A["도서 등록"] --> B["독서 기록"]
+  B --> C["통계 확인"]
+```
+
+```mermaid
+sequenceDiagram
+  participant U as 사용자
+  participant S as 서버
+  U->>S: 도서 목록 요청
+  S-->>U: 도서 목록 반환
+```
+````

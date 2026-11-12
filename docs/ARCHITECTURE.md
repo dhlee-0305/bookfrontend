@@ -64,6 +64,8 @@ src/
 │   ├── BookStatusBadge.jsx
 │   ├── ReadingTab.jsx    # 독서 기록 탭 (내부에 Form/Item 컴포넌트 포함)
 │   ├── MemoTab.jsx       # 메모 탭 (내부에 Form/Item 컴포넌트 포함)
+│   ├── DocumentContent.jsx # Markdown, GFM, 이미지 및 Mermaid 코드 블록 렌더링
+│   ├── MermaidDiagram.jsx # Mermaid 지연 로딩, SVG 렌더링 및 오류 표시
 │   ├── Toast.jsx         # 3초 자동 닫힘 알림
 │   └── ConfirmModal.jsx  # 삭제 확인 모달
 └── constants/
@@ -148,6 +150,28 @@ pages / components
 | 전역 인증 | AuthContext (`useState`) |
 | UI 상태 (모달, 토스트, 탭, 폼) | 각 컴포넌트 `useState` |
 | URL/라우팅 상태 | `location.state` (페이지 번호 복원 등) |
+
+### 5-5. Markdown 및 Mermaid 렌더링
+
+문서 상세(`DocumentDetail.jsx`)는 본문과 `imageBaseUrl`을 `DocumentContent`에 전달한다. ✅
+
+```text
+DocumentDetail
+  └── DocumentContent (react-markdown + remark-gfm)
+        ├── img → DocumentImage (상대 이미지 URL 변환, 지연 로딩)
+        └── pre → DocumentCodeBlock
+              ├── language-mermaid → MermaidDiagram → mermaid.render() → SVG
+              └── 그 외 → 일반 pre/code
+```
+
+- `DocumentCodeBlock`은 Markdown 코드 블록의 `language-mermaid` 클래스를 감지하고, 코드 텍스트를 `MermaidDiagram`의 `source`로 전달한다. ✅
+- `MermaidDiagram`은 최초 사용 시 `import('mermaid')`로 라이브러리를 불러온다. 모듈 범위의 Promise를 공유해 초기화를 한 번 수행하며, 로딩 실패 시 Promise를 초기화해 이후 호출에서 다시 시도할 수 있게 한다. ✅
+- 초기화 옵션은 `startOnLoad: false`, `securityLevel: 'strict'`, `suppressErrorRendering: true`이다. DOM 자동 탐색 대신 `useEffect`에서 고유 ID로 `mermaid.render()`를 호출하고 반환된 SVG를 전용 컨테이너에 삽입한다. ✅
+- `source`가 바뀌면 기존 SVG를 지우고 다시 렌더링한다. effect 정리 시 취소 플래그를 설정해 이전 비동기 작업의 결과가 DOM이나 상태에 반영되지 않게 한다. ✅
+- 렌더링 중에는 상태 문구(`role="status"`), 실패 시에는 오류 안내(`role="alert"`)와 펼칠 수 있는 오류 상세·원문을 표시한다. 오류와 원문은 React 텍스트로 출력한다. ✅
+- `src/index.css`에서 SVG의 강제 축소를 해제하고 컨테이너에 가로 스크롤을 적용한다. ✅
+
+Mermaid 처리는 브라우저에서 수행하며 별도 변환 API를 사용하지 않는다. Markdown HTML은 직접 실행하지 않고 `defaultUrlTransform`을 적용한다. SVG 삽입은 Mermaid가 `strict` 설정으로 생성한 결과에 한정한다. ✅
 
 ---
 

@@ -27,7 +27,7 @@
 | 서버 상태 | TanStack Query (React Query) 5 |
 | API 통신 | Axios |
 | 폼 검증 | React Hook Form + Zod |
-| Markdown 뷰어 | react-markdown + remark-gfm |
+| Markdown 뷰어 | react-markdown + remark-gfm + mermaid |
 
 ---
 
@@ -69,6 +69,16 @@ npm run dev
 ---
 
 ## 문서 게시판 사용
+
+Markdown의 코드 블록에 `mermaid` 언어를 지정하면 다이어그램으로 표시됩니다. Mermaid는 필요할 때 불러오며, 문법 오류가 있으면 오류 상세와 원문을 펼쳐볼 수 있습니다.
+
+````markdown
+```mermaid
+flowchart LR
+  A[도서 등록] --> B[독서 기록]
+  B --> C[통계 확인]
+```
+````
 
 상단의 **문서 게시판** 링크로 이동합니다. 목록과 상세는 로그인 없이 조회할 수 있으며, 등록·수정·삭제는 로그인이 필요합니다. 로그인한 사용자는 모든 문서를 수정·삭제할 수 있습니다.
 

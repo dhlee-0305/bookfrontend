@@ -21,4 +21,7 @@
 .document-content img { max-width: 100%; height: auto; }
 .document-content hr { border: 0; border-top: 1px solid #e5e7eb; margin: 1.5rem 0; }
 .document-content .contains-task-list { list-style: none; }
+.document-content .mermaid-diagram { padding: 1rem; border: 1px solid #e5e7eb; border-radius: .5rem; background: white; }
+.document-content .mermaid-diagram-svg { overflow-x: auto; }
+.document-content .mermaid-diagram-svg > svg { display: block; margin: 0 auto; max-width: none !important; }
 .document-content input[type="checkbox"] { margin-right: .5rem; }
